@@ -1,0 +1,406 @@
+---
+title: "Lab 1"
+author: "Jaime Lin"
+date: "11:59PM February 18, 2021"
+output:
+  word_document: default
+  pdf_document: default
+---
+  
+  You should have RStudio installed to edit this file. You will write code in places marked "TO-DO" to complete the problems. Some of this will be a pure programming assignment. The tools for the solutions to these problems can be found in the class practice lectures. I want you to use the methods I taught you, not for you to google and come up with whatever works. You won't learn that way.
+
+To "hand in" the homework, you should compile or publish this file into a PDF that includes output of your code. Once it's done, push by the deadline to your repository in a directory called "labs".
+
+* Print out the numerical constant pi with ten digits after the decimal point using the internal constant `pi`.
+
+```{r}
+options(digit=11)
+pi
+```
+
+* Sum up the first 103 terms of the series 1 + 1/2 + 1/4 + 1/8 + ...
+
+```{r}
+sum(1/(2^(0:102)))
+```
+
+* Find the product of the first 37 terms in the sequence 1/3, 1/6, 1/9  ...
+
+```{r}
+prod(1/(3*(1:37)))
+```
+
+
+* Find the product of the first 387 terms of `1 * 1/2 * 1/4 * 1/8 *` ...
+
+```{r}
+prod(1/(2^(0:386)))
+```
+
+Is this answer *exactly* correct? 
+  
+  #No exactly correct because we express a numerical overflow
+  
+  * Figure out a means to express the answer more exactly. Not compute exactly, but express more exactly.
+
+```{r}
+sum(log(1/2^(0:386)))
+```
+
+* Create the sequence `x = [Inf, 20, 18, ..., -20]`.
+
+```{r}
+x = c(Inf, seq(from = 20, to = -20, by=-2))
+x
+
+```
+
+Create the sequence `x = [log_3(Inf), log_3(100), log_3(98), ... log_3(-20)]`.
+
+```{r}
+x= c(Inf, seq(from=100, to=-20, by=-2))
+x =log(x, base=3)
+
+```
+
+Comment on the appropriateness of the non-numeric values.
+
+#TO-DO inf, -inf, nans talk about it
+
+
+* Create a vector of booleans where the entry is true if `x[i]` is positive and finite.
+
+```{r}
+
+y= !is.nan(x) & is.finite(x) & x>0
+y
+```
+
+* Locate the indices of the non-real numbers in this vector. Hint: use the `which` function. Don't hesitate to use the documentation via `?which`.
+
+```{r}
+?which
+which(y==FALSE)
+```
+
+* Locate the indices of the infinite quantities in this vector. 
+
+```{r}
+which(is.infinite(x))
+```
+
+* Locate the indices of the min and max in this vector. Hint: use the `which.min` and `which.max` functions.
+
+```{r}
+which.min(x)
+which.max(x)
+```
+
+* Count the number of unique values in `x`.
+
+```{r}
+length(unique(x))
+
+```
+
+* Cast `x` to a factor. Do the number of levels make sense?
+
+```{r}
+as.factor(x)
+```
+
+* Cast `x` to integers. What do we learn about R's infinity representation in the integer data type?
+  
+```{r}
+as.integer((x))
+```
+
+* Use `x` to create a new vector `y` containing only the real numbers in x.
+
+```{r}
+y= x[(!is.nan(x) & is.finite(x) & x>0)]
+y
+
+```
+
+* Use the left rectangle method to numerically integrate x^2 from 0 to 1 with rectangle width size 1e-6.
+
+```{r}
+sum(seq(from=0, to=1-1e-6, by= 1e-6)^2 * 1e-6)
+
+```
+
+
+* Calculate the average of 100 realizations of standard Bernoullis in one line using the `sample` function.
+
+```{r}
+sample(c(0,1), size=100, replace=TRUE)
+```
+
+
+* Calculate the average of 500 realizations of Bernoullis with p = 0.9 in one line using the `sample` and `mean` functions.
+
+```{r}
+#TO-DO
+mean(sample(c(0,1), size=500, replace=TRUE, prob = c(0.1,0.9)))
+```
+
+
+* Calculate the average of 1000 realizations of Bernoullis with p = 0.9 in one line using `rbinom`.
+
+```{r}
+#TO-DO
+?rbinom
+mean(rbinom(n=1000, size=1, prob=0.9))
+```
+
+* In class we considered a variable `x_3` which measured "criminality". We imagined L = 4 levels "none", "infraction", "misdimeanor" and "felony". Create a variable `x_3` here with 100 random elements (equally probable). Create it as a nominal (i.e. unordered) factor.
+
+```{r}
+#TO-DO
+x_3=as.factor(sample(c("none", "infraction", "misdimeanor", "felony"), size=100, replace=TRUE))
+x_3
+```
+
+* Use `x_3` to create `x_3_bin`, a binary feature where 0 is no crime and 1 is any crime.
+
+```{r}
+#TO-DO
+x_3_bin=x_3!="none"
+as.integer(x_3_bin)
+
+```
+
+* Use `x_3` to create `x_3_ord`, an ordered factor variable. Ensure the proper ordinal ordering.
+
+```{r}
+#TO-DO
+factor(x_3, level=c("none", "infraction", "misdimeanor", "felony"), order=TRUE)
+
+```
+
+* Convert this variable into three binary variables without any information loss and put them into a data matrix.
+
+```{r}
+#TO-DO
+x_3_infraction = as.integer(x_3 == "infraction")
+x_3_misdimeanor = as.integer(x_3 == "misdimeanor")
+x_3_felony = as.integer(x_3 == "felony")
+
+x_1 = cbind(x_3_infraction,x_3_misdimeanor, x_3_felony)
+head(x_1)
+
+```
+
+* What should the sum of each row be (in English)? 
+  
+  #TO-DO
+  row = sum of each column
+  r_n = c_1 + c_2 + ... + c_n
+  
+  Verify that. 
+
+
+```{r}
+#TO-DO
+rowSums(x_1)
+```
+
+* How should the column sum look (in English)? 
+  
+  #TO-DO
+  column = sum of each row
+  c_n = r_1 + r_2 + ... + r_n
+  Verify that.
+
+```{r}
+#TO-DO
+colSums(x_1)
+```
+
+* Generate a matrix with 100 rows where the first column is realization from a normal with mean 17 and variance 38, the second column is uniform between -10 and 10, the third column is poisson with mean 6, the fourth column in exponential with lambda of 9, the fifth column is binomial with n = 20 and p = 0.12 and the sixth column is a binary variable with exactly 24% 1's dispersed randomly. Name the rows the entries of the `fake_first_names` vector.
+
+```{r}
+fake_first_names = c(
+  "Sophia", "Emma", "Olivia", "Ava", "Mia", "Isabella", "Riley", 
+  "Aria", "Zoe", "Charlotte", "Lily", "Layla", "Amelia", "Emily", 
+  "Madelyn", "Aubrey", "Adalyn", "Madison", "Chloe", "Harper", 
+  "Abigail", "Aaliyah", "Avery", "Evelyn", "Kaylee", "Ella", "Ellie", 
+  "Scarlett", "Arianna", "Hailey", "Nora", "Addison", "Brooklyn", 
+  "Hannah", "Mila", "Leah", "Elizabeth", "Sarah", "Eliana", "Mackenzie", 
+  "Peyton", "Maria", "Grace", "Adeline", "Elena", "Anna", "Victoria", 
+  "Camilla", "Lillian", "Natalie", "Jackson", "Aiden", "Lucas", 
+  "Liam", "Noah", "Ethan", "Mason", "Caden", "Oliver", "Elijah", 
+  "Grayson", "Jacob", "Michael", "Benjamin", "Carter", "James", 
+  "Jayden", "Logan", "Alexander", "Caleb", "Ryan", "Luke", "Daniel", 
+  "Jack", "William", "Owen", "Gabriel", "Matthew", "Connor", "Jayce", 
+  "Isaac", "Sebastian", "Henry", "Muhammad", "Cameron", "Wyatt", 
+  "Dylan", "Nathan", "Nicholas", "Julian", "Eli", "Levi", "Isaiah", 
+  "Landon", "David", "Christian", "Andrew", "Brayden", "John", 
+  "Lincoln"
+)
+#TO-DO
+c1 = array(rnorm(100, mean = 17, sd =1))
+c2 = array(runif(100, min = -10, max = 10))
+c3 = array(rpois(100, 6))
+c4 = array(rexp(100, rate = 9))
+c5 = array(rbinom(20, 100, 0.12))
+c6 = as.integer(array(runif(100, min = 0, max = 2)))
+
+matrix(cbind( c1, c2, c3, c4, c5, c6), nrow = 100, ncol = 6, byrow = FALSE,
+               dimnames = list(c(fake_first_names)))
+
+```
+
+* Create a data frame of the same data as above except make the binary variable a factor "DOMESTIC" vs "FOREIGN" for 0 and 1 respectively. Use RStudio's `View` function to ensure this worked as desired.
+
+```{r}
+#TO-DO
+m_1 <- matrix(as.integer(array(runif(100, min = 0, max = 2))), nrow=100, ncol=6)
+
+              
+View(m_1, "DOMESTIC vs FOREIGN")
+```
+
+* Print out a table of the binary variable. Then print out the proportions of "DOMESTIC" vs "FOREIGN".
+
+```{r}
+#TO-DO
+print(m_1)
+```
+
+Print out a summary of the whole dataframe.
+
+```{r}
+#TO-DO
+?summary
+summary(m_1)
+```
+
+* Let `n = 50`. Create a n x n matrix `R` of exactly 50% entries 0's, 25% 1's 25% 2's. These values should be in random locations.
+
+```{r}
+#TO-DO
+m_2 <-matrix(c(0:2), nrow=50, ncol=50, byrow = FALSE)
+m_2
+```
+
+* Randomly punch holes (i.e. `NA`) values in this matrix so that an each entry is missing with probability 30%.
+
+```{r}
+#TO-DO
+
+
+```
+
+* Sort the rows in matrix `R` by the largest row sum to lowest. Be careful about the NA's!
+
+```{r}
+#TO-DO
+r_Sum = rowSums(m_2)
+r_Sum
+sort(r_Sum, decreasing = TRUE)
+```
+
+* We will now learn the `apply` function. This is a handy function that saves writing for loops which should be eschewed in R. Use the apply function to compute a vector whose entries are the standard deviation of each row. Use the apply function to compute a vector whose entries are the standard deviation of each column. Be careful about the NA's! This should be one line.
+
+```{r}
+#TO-DO
+?apply
+print("Row")
+row_Means = apply(m_2, 1, sd)
+row_Means
+print("columns")
+col_Means = apply(m_2, 2, sd)
+col_Means
+```
+
+* Use the `apply` function to compute a vector whose entries are the count of entries that are 1 or 2 in each column. This should be one line.
+
+```{r}
+#TO-DO
+
+count = function(m_2){
+  count_0 = 0
+  for(i in 1:length(m_2)){
+    if(m_2[i]== 1 || m_2[i]== 2)
+      count_0 = count_0 +1
+  }
+  count_0
+}
+apply(m_2, 2, count)
+```
+
+* Use the `split` function to create a list whose keys are the column number and values are the vector of the columns. Look at the last example in the documentation `?split`.
+
+```{r}
+#TO-DO
+?split
+g_0 <- cbind(a= c("a", "b", "c"), b= c(1:3))
+split(g_0, col(g_0))
+```
+
+* In one statement, use the `lapply` function to create a list whose keys are the column number and values are themselves a list with keys: "min" whose value is the minimum of the column, "max" whose value is the maximum of the column, "pct_missing" is the proportion of missingness in the column and "first_NA" whose value is the row number of the first time the NA appears.
+
+```{r}
+#TO-DO
+?lapply
+l_0 <- list(a=1:10, b= c("a","b","c","d", "e", "f", "g", "h", "i", "j"))
+lapply(l_0, min)
+lapply(l_0, max)
+
+```
+
+* Set a seed and then create a vector `v` consisting of a sample of 1,000 iid normal realizations with mean -10 and variance 100.
+
+```{r}
+#TO-DO
+set.seed(1000)
+v <- sample(c(-31:10), size = 1000, replace = TRUE)
+mean(v)
+var(v)
+
+```
+
+* Repeat this exercise by resetting the seed to ensure you obtain the same results.
+
+```{r}
+#TO-DO
+rm(v)
+set.seed(1000)
+v <- sample(c(-31:10), size = 1000, replace = TRUE)
+mean(v)
+var(v)
+```
+
+* Find the average of `v` and the standard error of `v`.
+
+```{r}
+#TO-DO
+mean(v)
+standard_error = sd(v) / 1000
+standard_error
+
+```
+
+* Find the 5%ile of `v` and use the `qnorm` function to compute what it theoretically should be. Is the estimate about what is expected by theory?
+  
+```{r}
+#TO-DO
+?qnorm
+qnorm(0.05, mean = -10)
+```
+
+* What is the percentile of `v` that corresponds to the value 0? What should it be theoretically? Is the estimate about what is expected by theory?
+  
+```{r}
+#TO-DO
+j=0
+for (i in v==0){
+  j = j+i
+}
+j
+percent = (j/1000)*100
+print(percent)
+
+```
